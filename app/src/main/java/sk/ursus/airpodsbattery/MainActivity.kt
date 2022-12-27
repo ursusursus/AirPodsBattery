@@ -9,7 +9,19 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import sk.ursus.airpodsbattery.checker.AirPodsBatteryChecker
 import sk.ursus.airpodsbattery.checker.AirPodsBatteryParser
 import sk.ursus.airpodsbattery.checker.AndroidBluetoothLeScanner
@@ -30,12 +42,27 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         Log.i("Default", "MainActivity # onCreate")
         batteryChecker = createBatteryChecker(this)
 
+        if (!hasPermissions(BLUETOOTH_PERMISSIONS)) {
+            requestPermissions(BLUETOOTH_PERMISSIONS, REQUEST_CODE)
+        }
+
         setContent {
             AirPodsBatterTheme {
-                MainScreen(batteryChecker = batteryChecker)
+//                val systemUiController = rememberSystemUiController()
+//                systemUiController.setStatusBarColor(Color.Yellow)
+
+                LazyColumn(contentPadding = WindowInsets.systemBars.asPaddingValues(), content = {})
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    MainScreen(batteryChecker = batteryChecker)
+                }
             }
         }
     }

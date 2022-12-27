@@ -7,9 +7,11 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanSettings
 import android.util.Log
 import android.util.SparseArray
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 
 interface BluetoothLeScanner {
@@ -20,7 +22,8 @@ class AndroidBluetoothLeScanner(
     private val bluetoothManager: BluetoothManager
 ) : BluetoothLeScanner {
     override fun scan(): Flow<ScanResult> {
-        return bluetoothManager.adapter.bluetoothLeScanner
+        val bluetoothLeScanner = bluetoothManager.adapter.bluetoothLeScanner ?: return emptyFlow()
+        return bluetoothLeScanner
             .scan(
                 scanFilter = createScanFilter(),
                 settings = createScanSettings()
@@ -72,7 +75,8 @@ private fun android.bluetooth.le.BluetoothLeScanner.scan(
             }
 
             override fun onScanFailed(errorCode: Int) {
-                error(errorCode)
+                Log.d("Default", "errr happened=$errorCode")
+                cancel()
             }
         }
         Log.d("Default", "scanning")

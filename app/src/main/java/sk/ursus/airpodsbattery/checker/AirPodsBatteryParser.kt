@@ -1,7 +1,5 @@
 package sk.ursus.airpodsbattery.checker
 
-import kotlin.random.Random
-
 class AirPodsBatteryParser {
     fun parse(scanResult: ScanResult): AirPodsBatteryLevel? {
         val data = scanResult.manufacturerSpecificData[76] ?: return null
@@ -27,7 +25,7 @@ class AirPodsBatteryParser {
 }
 
 private fun parseBattery(rawBatteryLevel: Byte): Int? {
-    return if (rawBatteryLevel in 0..10) rawBatteryLevel * 10 + Random.nextInt(10) else null
+    return if (rawBatteryLevel in 0..10) rawBatteryLevel * 10 + 4 else null
 }
 
 private fun ByteArray.encodeBase16(): ByteArray {
