@@ -25,7 +25,11 @@ class AirPodsBatteryParser {
 }
 
 private fun parseBattery(rawBatteryLevel: Byte): Int? {
-    return if (rawBatteryLevel in 0..10) rawBatteryLevel * 10 + 4 else null
+    return if (rawBatteryLevel in 0..10) {
+        (rawBatteryLevel * 10 + 4).coerceAtMost(100)
+    } else {
+        null
+    }
 }
 
 private fun ByteArray.encodeBase16(): ByteArray {
